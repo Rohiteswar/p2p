@@ -129,8 +129,8 @@ export default function Simulation() {
   const spread  = bestAsk && bestBid ? bestAsk - bestBid : null
 
   return (
-    <section id="playground" style={{ padding: '7rem 2rem', background: 'var(--surface)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section id="playground" className="section-lg" style={{ background: 'var(--surface)' }}>
+      <div className="page-inner">
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -155,12 +155,7 @@ export default function Simulation() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          style={{
-            display: 'flex', gap: '2rem', flexWrap: 'wrap',
-            padding: '1rem 1.5rem', borderRadius: 'var(--radius)',
-            background: 'var(--surface2)', border: '1px solid var(--border)',
-            marginBottom: '1.25rem',
-          }}
+          className="market-bar"
         >
           {[
             { l: 'Pair', v: 'BASE / QUOTE', c: undefined },
@@ -182,7 +177,7 @@ export default function Simulation() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.55, delay: 0.2 }}
-          style={{ display: 'grid', gridTemplateColumns: '270px 1fr 290px', gap: '1.1rem', alignItems: 'start' }}
+          className="sim-grid"
         >
           {/* Order form */}
           <Panel label="Place Order" tag="Simulation">

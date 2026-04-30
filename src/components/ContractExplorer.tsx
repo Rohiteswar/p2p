@@ -45,8 +45,8 @@ export default function ContractExplorer() {
   }
 
   return (
-    <section style={{ padding: '4rem 2rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section className="section-md">
+      <div className="page-inner">
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -72,15 +72,7 @@ export default function ContractExplorer() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '0.75rem',
-            padding: '0.85rem 1.25rem',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: 'var(--radius)',
-            marginBottom: '1.25rem',
-            flexWrap: 'wrap',
-          }}
+          className="address-bar"
         >
           <span style={{
             padding: '0.2rem 0.65rem', borderRadius: 99,
@@ -96,16 +88,11 @@ export default function ContractExplorer() {
 
           <span style={{ fontSize: '0.72rem', color: 'var(--text-dim)', fontWeight: 500, whiteSpace: 'nowrap' }}>Program ID</span>
 
-          <code style={{
-            flex: 1, fontFamily: 'var(--mono)', fontSize: '0.82rem',
-            color: 'var(--text)', letterSpacing: '0.01em',
-            overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-            minWidth: 0,
-          }}>
+          <code>
             {PROGRAM_ID}
           </code>
 
-          <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+          <div className="address-actions" style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
             <motion.button
               onClick={copy}
               whileHover={{ color: 'var(--green)' }}
@@ -150,7 +137,7 @@ export default function ContractExplorer() {
           whileInView="show"
           viewport={{ once: true, margin: '-40px' }}
           variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
-          style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}
+          className="explorer-grid"
         >
           {LINKS.map((link) => (
             <motion.a

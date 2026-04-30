@@ -105,8 +105,8 @@ export default function Quickstart() {
   }
 
   return (
-    <section id="quickstart" style={{ padding: '7rem 2rem' }}>
-      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+    <section id="quickstart" className="section-lg">
+      <div className="page-inner" style={{ maxWidth: 900 }}>
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
@@ -138,11 +138,7 @@ export default function Quickstart() {
           }}
         >
           {/* Tab bar */}
-          <div style={{
-            display: 'flex', alignItems: 'center',
-            borderBottom: '1px solid var(--border)',
-            padding: '0 0.25rem',
-          }}>
+          <div className="tab-bar">
             {TABS.map((tab) => (
               <button
                 key={tab.id}

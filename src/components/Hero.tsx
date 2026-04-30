@@ -36,7 +36,7 @@ export default function Hero() {
         position: 'relative', minHeight: '100vh',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         justifyContent: 'center', textAlign: 'center',
-        padding: '8rem 2rem 6rem', overflow: 'hidden',
+        padding: '8rem var(--page-pad) 6rem', overflow: 'hidden',
       }}
     >
       {/* Dot grid background */}
@@ -212,7 +212,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1.1 }}
-          style={{ display: 'flex', gap: '2.5rem', marginTop: '4rem', flexWrap: 'wrap', justifyContent: 'center' }}
+          className="stat-row"
         >
           {[
             { v: '<5K', l: 'CU per ix' },

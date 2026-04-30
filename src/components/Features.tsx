@@ -51,8 +51,8 @@ const item = {
 
 export default function Features() {
   return (
-    <section id="features" style={{ padding: '7rem 2rem' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <section id="features" className="section-lg">
+      <div className="page-inner">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -75,11 +75,7 @@ export default function Features() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, margin: '-60px' }}
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '1.1rem',
-          }}
+          className="features-grid"
         >
           {FEATURES.map((f) => (
             <motion.div

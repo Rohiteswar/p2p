@@ -1,26 +1,19 @@
 export default function Footer() {
   return (
-    <footer style={{
-      borderTop: '1px solid var(--border)',
-      padding: '3rem 2rem',
-    }}>
-      <div style={{
-        maxWidth: 1100, margin: '0 auto',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        flexWrap: 'wrap', gap: '1.5rem',
-      }}>
+    <footer style={{ borderTop: '1px solid var(--border)', padding: '3rem 0' }}>
+      <div className="footer-inner">
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>
           <Hexagon />
           P2P Protocol
         </div>
 
-        <div style={{ display: 'flex', gap: '1.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
           {[
-            { label: 'Features', href: '#features' },
+            { label: 'Features',   href: '#features' },
             { label: 'Playground', href: '#playground' },
             { label: 'Quickstart', href: '#quickstart' },
-            { label: 'npm', href: 'https://www.npmjs.com/package/@p2p-protocol/sdk', external: true },
-            { label: 'GitHub', href: 'https://github.com/Rohiteswar/p2p-protocol-sdk', external: true },
+            { label: 'npm',        href: 'https://www.npmjs.com/package/@p2p-protocol/sdk', external: true },
+            { label: 'GitHub',     href: 'https://github.com/Rohiteswar/p2p-protocol-sdk',  external: true },
           ].map((link) => (
             <a
               key={link.label}
@@ -28,8 +21,8 @@ export default function Footer() {
               target={link.external ? '_blank' : undefined}
               rel={link.external ? 'noopener noreferrer' : undefined}
               style={{ fontSize: '0.82rem', color: 'var(--text-dim)', transition: 'color 0.15s' }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--text)')}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--text-dim)')}
+              onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--text)')}
+              onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--text-dim)')}
             >
               {link.label}
             </a>
@@ -43,8 +36,8 @@ export default function Footer() {
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: 'var(--text)', fontWeight: 600, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--purple)')}
-            onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = 'var(--text)')}
+            onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = 'var(--purple)')}
+            onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = 'var(--text)')}
           >
             Rohiteswar Velagapudi
           </a>
