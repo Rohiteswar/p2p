@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
+import { Link } from 'react-router-dom'
 
 const NAV_LINKS = ['Features', 'Playground', 'Quickstart']
 
@@ -59,6 +60,29 @@ export default function Nav() {
               {label}
             </motion.a>
           ))}
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 + NAV_LINKS.length * 0.08, duration: 0.4 }}
+          >
+            <Link
+              to="/api-tester"
+              style={{
+                display: 'flex', alignItems: 'center', gap: '0.35rem',
+                padding: '0.28rem 0.75rem', borderRadius: 7,
+                background: 'rgba(153,69,255,0.1)',
+                border: '1px solid rgba(153,69,255,0.28)',
+                fontSize: '0.78rem', fontWeight: 600, color: 'var(--purple)',
+                transition: 'background 0.15s, border-color 0.15s',
+              }}
+              onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(153,69,255,0.18)'; el.style.borderColor = 'rgba(153,69,255,0.5)' }}
+              onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'rgba(153,69,255,0.1)'; el.style.borderColor = 'rgba(153,69,255,0.28)' }}
+            >
+              <TerminalIcon />
+              API Tester
+            </Link>
+          </motion.div>
+
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -123,6 +147,25 @@ export default function Nav() {
                     {label}
                   </a>
                 ))}
+                <Link
+                  to="/api-tester"
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    padding: '0.65rem 1rem',
+                    borderRadius: 8,
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: 'var(--purple)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.4rem',
+                  }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'var(--surface2)'; }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.background = 'transparent'; }}
+                >
+                  <TerminalIcon />
+                  API Tester
+                </Link>
                 <div style={{
                   margin: '0.4rem 1rem 0.5rem',
                   paddingTop: '0.5rem',
@@ -167,6 +210,15 @@ function CloseIcon() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
       <line x1="18" y1="6"  x2="6"  y2="18" />
       <line x1="6"  y1="6"  x2="18" y2="18" />
+    </svg>
+  )
+}
+
+function TerminalIcon() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="4 17 10 11 4 5" />
+      <line x1="12" y1="19" x2="20" y2="19" />
     </svg>
   )
 }
