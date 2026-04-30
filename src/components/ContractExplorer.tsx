@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
+import { api, Stats } from '../lib/api'
 
 const PROGRAM_ID = 'HazZUxenwxgxDumK5rt89mhXfffnVpA7Nyvx87kMts18'
 const EXPLORER_URL = `https://explorer.solana.com/address/${PROGRAM_ID}?cluster=devnet`
@@ -36,6 +37,13 @@ const LINKS = [
 
 export default function ContractExplorer() {
   const [copied, setCopied] = useState(false)
+  const [stats,  setStats]  = useState<Stats | null>(null)
+
+  useEffect(() => {
+    api.stats().then(setStats).catch(() => {})
+    const id = setInterval(() => api.stats().then(setStats).catch(() => {}), 30_000)
+    return () => clearInterval(id)
+  }, [])
 
   function copy() {
     navigator.clipboard.writeText(PROGRAM_ID).then(() => {
@@ -64,6 +72,26 @@ export default function ContractExplorer() {
           <p style={{ color: 'var(--text-dim)', fontSize: '1rem', maxWidth: 480, lineHeight: 1.7 }}>
             The contract is live on Solana Devnet. Every instruction, account, and event is fully verifiable on-chain.
           </p>
+
+          {stats && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              style={{ display: 'flex', gap: '2rem', marginTop: '1.5rem', flexWrap: 'wrap' }}
+            >
+              {[
+                { l: 'Markets',     v: stats.markets },
+                { l: 'Open Orders', v: stats.open_orders },
+                { l: 'Total Fills', v: stats.total_fills },
+              ].map(({ l, v }) => (
+                <div key={l}>
+                  <div style={{ fontSize: '0.68rem', color: 'var(--text-dim)', marginBottom: '0.15rem' }}>{l}</div>
+                  <div style={{ fontFamily: 'var(--mono)', fontWeight: 700, fontSize: '1rem', color: 'var(--purple)' }}>{v}</div>
+                </div>
+              ))}
+            </motion.div>
+          )}
         </motion.div>
 
         {/* Address bar */}
