@@ -39,49 +39,75 @@ export default function Simulation() {
     const p = parseInt(price), q = parseInt(qty), t = parseInt(orderType)
     if (!p || p <= 0 || !q || q <= 0) return
 
-    const order: OrderEntry = { id: nextId.current++, price: p, qty: q, remaining: q, type: t, side, ts: Date.now() }
+    const oid   = nextId.current++
+    const order: OrderEntry = { id: oid, price: p, qty: q, remaining: q, type: t, side, ts: Date.now() }
 
-    let asksSnap = [...asks]
-    let bidsSnap = [...bids]
+    addEvent('placed', `${side.toUpperCase()} #${oid}`, `${q} lots @ ${p.toLocaleString()} · ${ORDER_TYPES[t]}`)
 
-    if (side === 'ask') {
-      asksSnap = [...asksSnap, order].sort((a, b) => a.price - b.price)
-    } else {
-      bidsSnap = [...bidsSnap, order].sort((a, b) => b.price - a.price)
+    // Deep-copy so we never mutate React state directly
+    const workAsks: OrderEntry[] = asks.map(o => ({ ...o }))
+    const workBids: OrderEntry[] = bids.map(o => ({ ...o }))
+    const oppOrders = side === 'bid' ? workAsks : workBids
+
+    // Post-Only: cancel immediately if it would cross the spread
+    if (t === 3) {
+      const crosses = side === 'bid'
+        ? oppOrders.length > 0 && p >= oppOrders[0].price
+        : oppOrders.length > 0 && p <= oppOrders[0].price
+      if (crosses) {
+        addEvent('cancelled', `Post-Only #${oid} rejected`, 'Would have crossed the spread')
+        return
+      }
+      if (side === 'bid') setBids([...workBids, order].sort((a, b) => b.price - a.price))
+      else               setAsks([...workAsks, order].sort((a, b) => a.price - b.price))
+      return
     }
 
-    addEvent('placed', `${side.toUpperCase()} #${order.id}`, `${q} lots @ ${p.toLocaleString()} · ${ORDER_TYPES[t]}`)
+    // Attempt matching (Limit / IOC / FOK all try to match)
+    let rem = q
+    const fillLog: { restingId: number; fq: number; fillPrice: number }[] = []
+    const filledIds = new Set<number>()
 
-    if (t === 1 || t === 2) {
-      const opp = side === 'bid' ? asksSnap : bidsSnap
-      let rem = q
-      const filled: number[] = []
-      for (const resting of opp) {
-        if (rem === 0) break
-        const canFill = side === 'bid' ? p >= resting.price : p <= resting.price
-        if (!canFill) break
-        const fq = Math.min(rem, resting.remaining)
-        rem -= fq
-        resting.remaining -= fq
-        addEvent('filled', `Fill #${resting.id} ← #${order.id}`, `${fq} lots @ ${resting.price.toLocaleString()}`)
-        if (resting.remaining === 0) filled.push(resting.id)
-      }
-      if (t === 1 && rem < q) {
-        if (rem > 0) addEvent('cancelled', `IOC #${order.id} cancelled`, `${rem} lots unfilled`)
-      } else if (t === 2 && rem > 0) {
-        addEvent('cancelled', `FOK #${order.id} cancelled`, 'No full fill available')
-        if (side === 'ask') asksSnap.pop(); else bidsSnap.pop()
-      }
-      if (side === 'bid') {
-        setAsks(asksSnap.filter(o => !filled.includes(o.id)))
-        setBids(bidsSnap.filter(o => o.id !== order.id || rem === 0))
-      } else {
-        setBids(bidsSnap.filter(o => !filled.includes(o.id)))
-        setAsks(asksSnap.filter(o => o.id !== order.id || rem === 0))
-      }
+    for (const resting of oppOrders) {
+      if (rem === 0) break
+      const crosses = side === 'bid' ? p >= resting.price : p <= resting.price
+      if (!crosses) break
+      const fq = Math.min(rem, resting.remaining)
+      rem -= fq
+      resting.remaining -= fq
+      fillLog.push({ restingId: resting.id, fq, fillPrice: resting.price })
+      if (resting.remaining === 0) filledIds.add(resting.id)
+    }
+
+    // FOK: abort entirely if not 100% filled — no fills, no book change
+    if (t === 2 && rem > 0) {
+      addEvent('cancelled', `FOK #${oid} cancelled`, 'No full fill available')
+      return
+    }
+
+    // Emit fill events (after FOK check so they only appear on confirmed trades)
+    fillLog.forEach(({ restingId, fq, fillPrice }) => {
+      addEvent('filled', `Fill #${restingId} ← #${oid}`, `${fq} lots @ ${fillPrice.toLocaleString()}`)
+    })
+
+    // IOC: cancel any unfilled remainder
+    if (t === 1 && rem > 0) {
+      addEvent('cancelled', `IOC #${oid} cancelled`, `${rem} lots unfilled`)
+    }
+
+    // Apply changes: remove fully-filled opposing orders
+    const cleanOpp = oppOrders.filter(o => !filledIds.has(o.id))
+
+    if (side === 'bid') {
+      setAsks(cleanOpp)
+      // Limit: rest unfilled remainder on the bid book
+      if (t === 0 && rem > 0) setBids([...workBids, { ...order, remaining: rem }].sort((a, b) => b.price - a.price))
+      else setBids(workBids)
     } else {
-      setAsks(asksSnap)
-      setBids(bidsSnap)
+      setBids(cleanOpp)
+      // Limit: rest unfilled remainder on the ask book
+      if (t === 0 && rem > 0) setAsks([...workAsks, { ...order, remaining: rem }].sort((a, b) => a.price - b.price))
+      else setAsks(workAsks)
     }
   }, [price, qty, orderType, side, asks, bids, addEvent])
 
